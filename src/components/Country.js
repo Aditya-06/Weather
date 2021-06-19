@@ -84,10 +84,24 @@ class Countries extends Component {
           />
           <Paper
             elevation={3}
-            style={{ flex: "wrap", minHeight: "10rem", margin: "1rem" }}
+            style={{
+              flex: "wrap",
+              minHeight: "10rem",
+              margin: "1rem",
+              padding: "0.5rem",
+            }}
           >
             <p style={{ wordWrap: "break-word" }}>
-              {items ? JSON.stringify(items) : "Select Country to View data"}
+              {items ? (
+                <>
+                  {`Information: ${JSON.stringify(items.location)}`}
+                  <br />
+                  Icon:{" "}
+                  <img src={items.current.condition.icon} alt="icon"></img>
+                </>
+              ) : (
+                "Select Country to View data"
+              )}
             </p>
           </Paper>
         </Grid>
@@ -98,6 +112,7 @@ class Countries extends Component {
 
 const mapStateToProps = function (props) {
   return {
+    // Change name
     country: props.CountryReducer,
     location: props.LocationReducer,
   };

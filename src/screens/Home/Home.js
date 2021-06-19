@@ -6,19 +6,6 @@ import Country from "../../components/Country";
 import Lower from "../../layout/Lower";
 
 export default class Home extends Component {
-  state = {
-    name: "Aditya",
-    age: 20,
-  };
-
-  handleChange = (e) => {
-    this.setState({ name: e.target.value });
-  };
-
-  formHandle = (e) => {
-    e.preventDefault();
-    console.log(this.state);
-  };
   render() {
     return (
       <Grid container justify="center">

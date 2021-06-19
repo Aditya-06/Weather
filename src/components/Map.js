@@ -35,18 +35,17 @@ class Map extends React.Component {
       8
     );
     // check if position has changed
-    if (this.props.markerPosition !== markerPosition) {
-      this.marker.setLatLng({
-        lat: this.props.location[0],
-        lng: this.props.location[1],
-      });
-    }
+    this.marker.setLatLng({
+      lat: this.props.location[0],
+      lng: this.props.location[1],
+    });
   }
   render() {
     return <div id="map" style={style} />;
   }
 }
 
+// component should update
 const mapStateToProps = function (props) {
   return {
     location: props.LocationReducer,
