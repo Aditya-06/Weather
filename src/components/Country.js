@@ -3,20 +3,30 @@ import Select from "react-select";
 import csc from "country-state-city";
 import axios from "axios";
 import { Grid, Paper } from "@material-ui/core";
+import { connect } from "react-redux";
 
+import { update_country } from "../redux/actions/CountryActions";
+import { update_coordinates } from "../redux/actions/LocationAction";
+
+// Countries Component Containing Drop-down and Capital + coordinates
 class Countries extends Component {
-  state = {
-    countries: csc.getAllCountries(),
-    selectedOption: null,
-    items: {},
-    dropdown: {},
-    isLoaded: false,
-  };
+  // Set-up Initial States
+  constructor(props) {
+    super(props);
+    this.state = {
+      countries: csc.getAllCountries(),
+      selectedOption: null,
+      items: null,
+      dropdown: {},
+      isLoaded: false,
+    };
+  }
 
+  // Handle Different Country Selection
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
-    // console.log(`Option selected:`, selectedOption);
 
+    // Make an Axios call to WeatherAPI
     let config = {
       method: "get",
       url: `http://api.weatherapi.com/v1/current.json?key=df3ab929c6aa4ad0953153113211806&q=${selectedOption.value}`,
@@ -25,7 +35,13 @@ class Countries extends Component {
 
     axios(config)
       .then((response) => {
-        // console.log(JSON.stringify(response.data));
+        // We must Update the states and dispatch Redux Actions for Capital and Coordinates
+        this.props.countryUpdate(response.data.location.name);
+        this.props.locationUpdate([
+          response.data.location.lat,
+          response.data.location.lon,
+        ]);
+        console.log(`location: ${JSON.stringify(this.props.location)}`);
         this.setState({ items: response.data, isLoaded: true });
       })
       .catch((error) => {
@@ -34,7 +50,7 @@ class Countries extends Component {
   };
 
   componentDidMount() {
-    // console.log(this.state.countries);
+    // Standarize the Drop-down to fit the React-Select Compomenet
     const dropdownList = this.state.countries.map((city) => {
       return {
         value: city.name,
@@ -44,56 +60,54 @@ class Countries extends Component {
         label: city.name,
       };
     });
-    // console.log(dropdownList);
     this.setState({ dropdown: dropdownList });
   }
 
   render() {
-    const { error, isLoaded, items, dropdown } = this.state;
+    const { items, dropdown } = this.state;
 
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return (
-        <Grid container justify="center" style={{ margin: "3rem" }}>
-          <Grid item style={{ width: "80%" }}>
-            <Select
-              value={this.selectedOption}
-              onChange={this.handleChange}
-              options={dropdown}
-            />
-            <Paper
-              elevation={3}
-              style={{ flex: "wrap", minHeight: "10rem", margin: "1rem" }}
-            >
-              <p style={{ wordWrap: "break-word" }}>Get weather here</p>
-            </Paper>
-          </Grid>
+    return (
+      <Grid
+        container
+        justify="center"
+        style={{ margin: "3rem", zIndex: "1000" }}
+      >
+        <Grid item style={{ width: "80%" }}>
+          <h4>
+            Capital: {this.props.country} location: {this.props.location}
+          </h4>
+
+          <Select
+            value={this.selectedOption}
+            onChange={this.handleChange}
+            options={dropdown}
+          />
+          <Paper
+            elevation={3}
+            style={{ flex: "wrap", minHeight: "10rem", margin: "1rem" }}
+          >
+            <p style={{ wordWrap: "break-word" }}>
+              {items ? JSON.stringify(items) : "Select Country to View data"}
+            </p>
+          </Paper>
         </Grid>
-      );
-    } else {
-      return (
-        <Grid container justify="center" style={{ margin: "3rem" }}>
-          <Grid item style={{ width: "80%" }}>
-            <h4>countries</h4>
-            <Select
-              value={this.selectedOption}
-              onChange={this.handleChange}
-              options={dropdown}
-            />
-            <Paper
-              elevation={3}
-              style={{ flex: "wrap", minHeight: "10rem", margin: "1rem" }}
-            >
-              <p style={{ wordWrap: "break-word" }}>
-                {JSON.stringify(items.current)}
-              </p>
-            </Paper>
-          </Grid>
-        </Grid>
-      );
-    }
+      </Grid>
+    );
   }
 }
 
-export default Countries;
+const mapStateToProps = function (props) {
+  return {
+    country: props.CountryReducer,
+    location: props.LocationReducer,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    countryUpdate: (name) => dispatch(update_country(name)),
+    locationUpdate: (latlng) => dispatch(update_coordinates(latlng)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Countries);

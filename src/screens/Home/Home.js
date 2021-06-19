@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import { Grid } from "@material-ui/core";
 import "./Home.scss";
 
-import SeasonDisplay from "../../components/SeasonDisplay";
 import Country from "../../components/Country";
-import Weather from "../../components/Forcast";
+import Lower from "../../layout/Lower";
 
 export default class Home extends Component {
   state = {
@@ -26,7 +25,7 @@ export default class Home extends Component {
         <Grid style={{ margin: "2rem", width: "100%" }} item>
           <div>
             <Country />
-            <Weather />
+            <Lower />
           </div>
         </Grid>
       </Grid>

@@ -1,11 +1,11 @@
 import CountryReducer from "./CountryReducer";
-import UserReducer from "./UserReducer";
+import LocationReducer from "./LocationReducer";
 
 import { combineReducers } from "redux";
 
 const allReducers = combineReducers({
   CountryReducer: CountryReducer,
-  UserReducer: UserReducer,
+  LocationReducer: LocationReducer,
 });
 
 export default allReducers;
