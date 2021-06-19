@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactWeather, { useOpenWeather } from "react-open-weather";
-import { connect } from "react-redux";
 
 const Forcast = ({ location = [12.348722, 19.237361], name = "India" }) => {
   const { data, isLoading, errorMessage } = useOpenWeather({
